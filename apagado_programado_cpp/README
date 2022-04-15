@@ -1,0 +1,4 @@
+Si colocas el path del programa en tu %path% podrás ejecutarlo (dentro de la terminal) desde cualquier directorio.
+Sólo tendrás que escribir apagar y te saldrá el mensaje de los Minutos --> 
+
+El comando shutdown /a sirve para cancelar un apagado programado del ordenador.
