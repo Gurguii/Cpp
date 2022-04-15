@@ -1,0 +1,25 @@
+1. Nuevo usuario
+2. Buscar usuario
+3. Eliminar usuario
+4. Vaciar usuarios
+5. Ver usuarios
+6. Guardar cambios
+0. Salir
+
+El programa lee y guarda los datos en un "data.txt", basta con crear uno vació para ir llenándolo.
+Si quieres añadir usuarios manualmente, la forma estructura del data.txt linea por linea es: 
+
+Dni Nombre Apellido Edad Sexo --> Ejemplo --> 123456789e Gurgui Gomez 20 H
+
+Si quisiesemos añadir muchos Gurguis:
+data.txt:
+  123456789e Gurgui Gomez 20 H
+  123456789e Gurgui Gomez 20 H
+  123456789e Gurgui Gomez 20 H
+  123456789e Gurgui Gomez 20 H
+  123456789e Gurgui Gomez 20 H
+  123456789e Gurgui Gomez 20 H
+  
+Al ejecutar el programa y leer el fichero 'data.txt' nos pondrá que hay 6 usuarios.
+
+
