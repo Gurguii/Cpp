@@ -6,12 +6,12 @@
 6. Guardar cambios
 0. Salir
 
-El programa lee y guarda los datos en un "data.txt", basta con crear uno vació para ir llenándolo.
-Si quieres añadir usuarios manualmente, la forma estructura del data.txt linea por linea es: 
+El programa lee y guarda los datos en un "data.txt", basta con crear uno vacío para ir llenándolo.
+Si quieres añadir usuarios manualmente, la forma estructura del data.txt línea por línea es: 
 
 Dni Nombre Apellido Edad Sexo --> Ejemplo --> 123456789e Gurgui Gomez 20 Hombre
 
-Si quisiesemos añadir muchos Gurguis:
+Si quisiésemos añadir muchos Gurguis:
 data.txt:
   123456789e Gurgui Gomez 20 Hombre
   123456789e Gurgui Gomez 20 Hombre
