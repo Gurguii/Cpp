@@ -170,13 +170,14 @@ void VerUsuarios(Contactos* contacts){
       if (i == contacts->contador){
         break;
       }
-      cout << "-- " << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << " --" << endl;
+      cout << endl << "-- " << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << " --" << endl;
       cout << "Dni: " << contacts->userlist[i].dni << endl;
       cout << "Edad: " << contacts->userlist[i].edad << endl;
       cout << "Sexo: " << contacts->userlist[i].sexo << endl;
     }
     cout << endl << "Pagina " << floor(*max/(*cantidad)) << " de " << contacts->contador/(*cantidad) + *unamas << endl << endl;
     cout << "Anterior: 'a'    Siguiente: 'd'      Editar: 'e'        Salir: 'q'";
+
     *eleccion = _getch();
     if(*eleccion == "a" || *eleccion == "A"){
       *pos = *pos - *cantidad;
@@ -187,7 +188,59 @@ void VerUsuarios(Contactos* contacts){
       continue;
     }
     else if(*eleccion == "e" || *eleccion == "E"){
-      continue;
+      string* respuesta1 = new string;
+      string* respuesta2 = new string;
+      system("cls");
+      Cabecera("Editar");
+      cout << endl << "Usuarios: " << endl;
+      for(int i = *pos, j = 1; i < *max ; i++,j++){
+        cout << j << " " << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << endl;
+      }
+      cout << "Opcion: " << endl;
+      *respuesta1 = _getch();
+      for (int i = 0; i<*cantidad;i++){
+        if(*respuesta1 == to_string(i+1)){
+          cout << "1. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre << endl;
+          cout << "2. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido << endl;
+          cout << "3. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].edad << endl;
+          cout << "4. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].sexo << endl;
+          cout << "Opcion: " << endl;
+          *respuesta2 = _getch();
+          while(true){
+            if(*respuesta2 == "1"){
+              cout << "Cambiar nombre: ";
+              cin >> *respuesta2;
+              cout << endl << "Nuevo nombre: " << *respuesta2 << endl;
+              contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre = *respuesta2;
+              break;
+            }else if(*respuesta2 == "2"){
+              cout << "Cambiar apellido: ";
+              cin >> *respuesta2;
+              cout << endl << "Nuevo apellido: " << *respuesta2 << endl;
+              contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido = *respuesta2;
+              break;
+            }else if(*respuesta2 == "3"){
+              cout << "Cambiar edad: ";
+              cin >> *respuesta2;
+              cout << endl << "Nueva edad: " << *respuesta2 << endl;
+              contacts->userlist[*pos+(stoi(*respuesta1)-1)].edad = stoi(*respuesta2);
+              break;
+            }else if(*respuesta2 == "4"){
+              cout << "Cambiar sexo: ";
+              cin >> *respuesta2;
+              cout << endl << "Nuevo sexo: " << *respuesta2 << endl;
+              contacts->userlist[*pos+(stoi(*respuesta1)-1)].sexo = *respuesta2;
+              break;
+            }else{
+              cout << "????" << endl;
+              continue;
+            }
+          }
+          cout << "Usuario modificado con exito :) " << endl;
+          delete respuesta1;
+          delete respuesta2;
+        }
+      }
     }
     else if(*eleccion == "q" || *eleccion == "Q"){
       break;
@@ -214,6 +267,8 @@ void GuardarCambios(Contactos* contacts){
   cout << "* Cambios guardados *" << endl;
   system("pause");
 }
+
+//HACER CAMBIARDATOS();
 int main(){
   Contactos contacts;
   Persona* leerUsuario = new Persona;
