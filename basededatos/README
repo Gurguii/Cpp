@@ -23,6 +23,8 @@ data.txt:
   123456789e Gurgui Gomez 20 Hombre
   
 Al ejecutar el programa y leer el fichero 'data.txt' nos pondrá que hay 6 usuarios.
-El programa sigue leyendo data.txt aunque esté como oculto (attrib +H /path/a/data.txt).
+
+El programa sigue leyendo data.txt aunque esté como oculto (attrib +H /path/a/data.txt). Peeeeero, no permite guardar los cambios si el archivo está oculto,
+será cuestión de permisos ya que me dejará usar ifstream(leer datos) pero no ofstream(escribir datos), lo investigaré.
 
 Faltan cosas por pulir, pero ta lindo.
