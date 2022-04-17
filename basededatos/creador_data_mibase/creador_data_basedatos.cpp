@@ -16,18 +16,14 @@ int main(){
   cin >> *nombre;
   ofstream fichero(*nombre);
   if(fichero){
+    fichero  << dni[rand() % dni.size()] << " " << nombresHombres[rand() % nombresHombres.size()] << " " << apellidos[rand() % apellidos.size()] << " " << rand() % 100 << " " << "Hombre" ;
     for(int i = 0;  i < *cnt ; i++){
-      if(i==0){
-        fichero  << endl << dni[rand() % dni.size()] << " " << nombresHombres[rand() % nombresHombres.size()] << " " << apellidos[rand() % apellidos.size()] << " " << rand() % 100 << " " << "Hombre" ;
-      }
-      else{
         if (rand()%2){
           fichero  << endl << dni[rand() % dni.size()] << " " << nombresHombres[rand() % nombresHombres.size()] << " " << apellidos[rand() % apellidos.size()] << " " << rand() % 100 << " " << "Hombre" ;
         }
         else{
           fichero  << endl << dni[rand() % dni.size()] << " " << nombresMujeres[rand() % nombresMujeres.size()] << " " << apellidos[rand() % apellidos.size()] << " " << rand() % 100 << " " << "Mujer" ;
         }
-      }
     }
     fichero.close();
     cout << "Fichero creado con exito :)" << endl;
