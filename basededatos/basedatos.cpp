@@ -7,6 +7,7 @@
 #include <math.h>
  
 using namespace std;
+int recordar_guardado = 0;
 struct Persona{
   string dni;
   string nombre;
@@ -24,7 +25,7 @@ struct Contactos{
 void Cabecera(string section){
   system("cls");
   cout << endl << "-------- " << section << " --------" << endl;
-  cout << "Introduce 'q' para volver al menu principal" << endl << endl;
+  cout << "Introduce 'q' para volver" << endl << endl;
 }
 string ComprobarDni(){
   char letras[23] = {'T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L','C','K','E'};
@@ -96,21 +97,31 @@ void NuevoUsuario(Contactos* contacts){
   string sexo = CogerSexo();
   contacts->userlist.push_back(Persona{dni, nombre, apellido, edad, sexo});
   contacts->contador+=1;
+  recordar_guardado=1;
 }
 void BuscarUsuario(Contactos* contacts){
   string* dni = new string;
   *dni = ComprobarDni();
   for(int i = 0; i<contacts->userlist.size(); i++){
     if (contacts->userlist[i].dni == *dni){
-      cout << "* Usuario encontrado *" << endl;
+      cout << "--Usuario encontrado--" << endl;
       cout << "Nombre   --> " << contacts->userlist[i].nombre << endl;
       cout << "Apellido --> " << contacts->userlist[i].apellido << endl;
       cout << "Edad     --> " << contacts->userlist[i].edad << endl;
       cout << "Sexo     --> " << contacts->userlist[i].sexo << endl;
-      system("pause");
+      cout << "Pulse enter para continuar ..." << endl;
+      cin.get();
+      cin.clear();
+      cin.ignore(10000, '\n');
+      delete dni;
+      return;
     }
   }
   delete dni;
+  cout << "No se ha encontrado ningun usuario con dni: " << *dni << endl;
+  cin.get();
+  cin.clear();
+  cin.ignore(10000, '\n');
 }
 void EliminarUsuario(Contactos* contacts){
   string* dni = new string;
@@ -119,39 +130,56 @@ void EliminarUsuario(Contactos* contacts){
     if(contacts->userlist[i].dni == *dni){
       string* respuesta = new string;
       cout << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << endl;
-      cout << "* Eliminar usuario? s/n *" << endl;
+      cout << "Eliminar usuario s/n ";
       cin >> *respuesta;
       if( *respuesta == "s" || *respuesta == "si"){
         contacts->userlist.erase(contacts->userlist.begin() + i);
         contacts->contador-=1;
+        cout << endl << "-- Usuario eliminado --" << endl;
+        recordar_guardado=1;
+        cout << "Pulse enter para continuar...";
         delete dni;
-        cout << endl << " * Usuario eliminado * " << endl;
-        system("pause");
+        delete respuesta;
+        cin.get();
+        cin.clear();
+        cin.ignore(10000,'\n');
       }
       else{
         delete dni;
+        delete respuesta;
         break;
       }
     }
   }
 }
 void VaciarUsuarios(Contactos* contacts){
-  cout << "* Vaciar lista de datos? s/n *" << endl; 
   string* respuesta = new string;
+  cout << "Vaciar lista de datos? s/n ";
   cin >> *respuesta;
   if (*respuesta == "s" || *respuesta == "si"){
     contacts->userlist.clear();
     contacts->userlist.shrink_to_fit();
     contacts->contador=0;   
-    cout << "* La base de datos ha sido vaciada *" << endl;
+    cout << "-- La base de datos ha sido vaciada --" << endl;
+    recordar_guardado=1;
   }
-  system("pause");
+  delete respuesta;
 }
 void VerUsuarios(Contactos* contacts){
   int* cantidad = new int;
   *cantidad = 0;
-  cout << "Cantidad de usuarios por pagina: ";
-  cin >> *cantidad;
+  string* temp = new string;
+  //MEJORAR ESTE DESASTRE
+  while(1){
+    cout << "Cantidad de usuarios por pag: ";
+    *temp = _getch();
+    if(*temp == "q" || *temp == "Q"){
+      return;
+    }else{
+      *cantidad = stoi(*temp);
+      break;
+    }
+  }
   int* unamas = new int;
   if (contacts->contador % *cantidad != 0){
     *unamas = 1;
@@ -177,7 +205,6 @@ void VerUsuarios(Contactos* contacts){
     }
     cout << endl << "Pagina " << floor(*max/(*cantidad)) << " de " << contacts->contador/(*cantidad) + *unamas << endl << endl;
     cout << "Anterior: 'a'    Siguiente: 'd'      Editar: 'e'        Salir: 'q'";
-
     *eleccion = _getch();
     if(*eleccion == "a" || *eleccion == "A"){
       *pos = *pos - *cantidad;
@@ -190,53 +217,48 @@ void VerUsuarios(Contactos* contacts){
     else if(*eleccion == "e" || *eleccion == "E"){
       string* respuesta1 = new string;
       string* respuesta2 = new string;
-      system("cls");
       Cabecera("Editar");
-      cout << endl << "Usuarios: " << endl;
       for(int i = *pos, j = 1; i < *max ; i++,j++){
-        cout << j << " " << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << endl;
+        cout << j << " => " << contacts->userlist[i].nombre << " " << contacts->userlist[i].apellido << endl;
       }
-      cout << "Opcion: " << endl;
+      cout << endl << "Opcion: ";
       *respuesta1 = _getch();
+      if(*respuesta1 == "q" || *respuesta1 == "Q"){
+
+      }
       for (int i = 0; i<*cantidad;i++){
         if(*respuesta1 == to_string(i+1)){
+          Cabecera("Editar "+contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre+" "+contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido);
           cout << "1. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre << endl;
           cout << "2. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido << endl;
           cout << "3. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].edad << endl;
           cout << "4. " << contacts->userlist[*pos+(stoi(*respuesta1)-1)].sexo << endl;
-          cout << "Opcion: " << endl;
-          *respuesta2 = _getch();
           while(true){
+            cout << "=> ";
+            *respuesta2 = _getch();
             if(*respuesta2 == "1"){
-              cout << "Cambiar nombre: ";
+              cout << "Cambiar nombre:  ";
               cin >> *respuesta2;
-              cout << endl << "Nuevo nombre: " << *respuesta2 << endl;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre = *respuesta2;
-              break;
             }else if(*respuesta2 == "2"){
               cout << "Cambiar apellido: ";
               cin >> *respuesta2;
-              cout << endl << "Nuevo apellido: " << *respuesta2 << endl;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido = *respuesta2;
-              break;
             }else if(*respuesta2 == "3"){
               cout << "Cambiar edad: ";
               cin >> *respuesta2;
-              cout << endl << "Nueva edad: " << *respuesta2 << endl;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].edad = stoi(*respuesta2);
-              break;
             }else if(*respuesta2 == "4"){
               cout << "Cambiar sexo: ";
               cin >> *respuesta2;
-              cout << endl << "Nuevo sexo: " << *respuesta2 << endl;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].sexo = *respuesta2;
+            }else if(*respuesta2 == "q"){
               break;
             }else{
-              cout << "????" << endl;
               continue;
             }
+            continue;
           }
-          cout << "Usuario modificado con exito :) " << endl;
           delete respuesta1;
           delete respuesta2;
         }
@@ -264,8 +286,10 @@ void GuardarCambios(Contactos* contacts){
     cout << "No se ha podido abrir el fichero 'data.txt' " << endl;
     exit(0);
   }
-  cout << "* Cambios guardados *" << endl;
-  system("pause");
+  cout << "Cambios guardados, pulse enter para continuar... ";
+  cin.get();
+  cin.clear();
+  cin.ignore(10000,'\n');
 }
 
 //HACER CAMBIARDATOS();
@@ -324,10 +348,18 @@ int main(){
         VerUsuarios(&contacts);
         continue;
       case '6' :
-        Cabecera("Guardar cambios");
         GuardarCambios(&contacts);
         continue;
       case '0' :
+        if(recordar_guardado){
+          string* rsp = new string;
+          cout << "Hay cambios sin guardar, ¿guardar? s/n: ";
+          cin >> *rsp;
+          if(*rsp == "s" || *rsp == "si"){
+            GuardarCambios(&contacts);
+          }
+          delete rsp;
+        }
         return(0);
         exit(0);
       default:
