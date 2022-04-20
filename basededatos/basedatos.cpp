@@ -5,8 +5,22 @@
 #include <stdio.h>
 #include <conio.h>
 #include <math.h>
- 
 using namespace std;
+//Supongo que esto no hace falta ni mucho menos, con una estructura sería 
+//suficiente para hacerlo, pero me apetecía usar clases :P
+class Currentuser{
+  public:
+    int id;
+    string usuario;
+    string pass;
+    int privilegios;
+    Currentuser(int id, string usuario, string pass, int privilegios){
+      this->id = id;
+      this->usuario = usuario;
+      this->pass = pass;
+      this->privilegios = privilegios;
+    }
+};
 int recordar_guardado = 0;
 struct Persona{
   string dni;
@@ -240,18 +254,22 @@ void VerUsuarios(Contactos* contacts){
               cout << "Cambiar nombre:  ";
               cin >> *respuesta2;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].nombre = *respuesta2;
+              recordar_guardado=1;
             }else if(*respuesta2 == "2"){
               cout << "Cambiar apellido: ";
               cin >> *respuesta2;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].apellido = *respuesta2;
+              recordar_guardado=1;
             }else if(*respuesta2 == "3"){
               cout << "Cambiar edad: ";
               cin >> *respuesta2;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].edad = stoi(*respuesta2);
+              recordar_guardado=1;
             }else if(*respuesta2 == "4"){
               cout << "Cambiar sexo: ";
               cin >> *respuesta2;
               contacts->userlist[*pos+(stoi(*respuesta1)-1)].sexo = *respuesta2;
+              recordar_guardado=1;
             }else if(*respuesta2 == "q"){
               break;
             }else{
@@ -291,9 +309,123 @@ void GuardarCambios(Contactos* contacts){
   cin.clear();
   cin.ignore(10000,'\n');
 }
-
+int BuscarCopias(string* username){
+  ifstream registrados("registrados.txt");
+  string* check = new string;
+  while(registrados){
+    registrados >> *check;
+    if(*check == *username){
+      cout << "Ya existe un/a " << *username << " registrad@" << endl;
+      return(1);
+    }
+  }
+  delete check;
+  return(0);
+}
+int RegistrarUsuario(){
+  int* id = new int;
+  *id = 0;
+  string* linea = new string;
+  ifstream contar_usuarios("registrados.txt");
+  if(contar_usuarios){
+    while(contar_usuarios){
+      getline(contar_usuarios, *linea);
+      *id+=1;
+    }
+  }
+  string* username = new string;
+  string* susername = new string;
+  string* pass = new string;
+  string* spass = new string;
+  do{
+    cout << "Introduce tu nombre de usuario: ";
+    cin >> *username;
+  }while(BuscarCopias(username));
+  do{
+    cout << "Repetir nombre de usuario: ";
+    cin >> *susername;
+  }while(*username != *susername);
+  cout << endl << "Contrasenia: ";
+  cin >> *pass;
+  do{
+    cout << "Repetir contrasenia: ";
+    cin >> *spass;
+  }while(*pass != *spass);
+  fstream fichero_registrados("registrados.txt", ios::app);
+  if(fichero_registrados){
+    fichero_registrados << endl << *id << " " << *username << " " << *pass << " " << 0;
+    fichero_registrados.close();
+    return(1);
+  }
+  delete id;
+  delete username;
+  delete susername;
+  delete pass;
+  delete spass;
+  return(0);
+}
+int IniciarSesion(int* id, string* usuario, string* contra, int* privs){
+  int* aidi = new int;
+  int* privilegios = new int;
+  string* username = new string;
+  string* pass = new string;
+  string* checkuser = new string;
+  string* checkpass = new string;
+  cout << "Usuario: ";
+  cin >> *username;
+  cout << "Contrasenia: ";
+  cin >> *pass;
+  ifstream check_login("registrados.txt");
+  while(check_login){
+    check_login >> *aidi >> *checkuser >> *checkpass >> *privilegios;
+    if(*checkuser == *username & *checkpass == *pass){
+      check_login.close();
+      *id = *aidi;
+      *usuario = *username;
+      *contra = *pass;
+      *privs = *privilegios;
+      return(1);
+    }
+  }
+  check_login.close();
+  cout << "Por favor, revisa las credenciales" << endl;
+  system("pause");
+  return(0);
+}
 //HACER CAMBIARDATOS();
 int main(){
+  int* userid = new int;
+  string* username = new string;
+  string* pass = new string;
+  int* privs = new int;
+  //PRIMERO INICIAR SESION
+  int* eleccion = new int;
+  while(1){
+    system("cls");
+    cout << "1. Iniciar sesion" << endl;
+    cout << "2. Registrarse" << endl;
+    cout << "0. Salir" << endl;
+    cout << "Opcion: ";
+    cin >> *eleccion;
+    if (*eleccion == 1){
+      if(IniciarSesion(userid, username, pass, privs)){break;}
+    }else if(*eleccion == 2){
+      if(RegistrarUsuario()){
+        cout << "Te has registrado con exito :)" << endl;
+        cout <<"Enter para continuar";
+        cin.get();
+        cin.clear();
+        cin.ignore(10000,'\n');
+        continue;}
+    }else if(*eleccion == 0){
+      delete eleccion;
+      exit(0);
+    }else{
+      continue;
+    }
+  }
+  Currentuser currentuser(*userid, *username, *pass, *privs);
+  //DESPUES LEER DATOS
   Contactos contacts;
   Persona* leerUsuario = new Persona;
   ifstream data("data.txt");
@@ -314,7 +446,7 @@ int main(){
   int opcion{};
   while(true){
     system("cls");
-    cout << "**** Base de datos ****" << endl;
+    cout << "****" << "Bienvenid@ " << currentuser.usuario << " ****" << endl;
     cout << "Usuarios totales: " << contacts.contador << endl;
     cout << "1. Nuevo usuario" << endl;
     cout << "2. Buscar usuario" << endl;
@@ -353,7 +485,7 @@ int main(){
       case '0' :
         if(recordar_guardado){
           string* rsp = new string;
-          cout << "Hay cambios sin guardar, ¿guardar? s/n: ";
+          cout << "Hay cambios sin guardar, quieres guardarlos? s/n: ";
           cin >> *rsp;
           if(*rsp == "s" || *rsp == "si"){
             GuardarCambios(&contacts);
@@ -362,7 +494,7 @@ int main(){
         }
         return(0);
         exit(0);
-      default:
+      default :
         break;
     }
   }
