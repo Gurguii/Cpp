@@ -1,4 +1,4 @@
-**** Base de datos ****
+**** Bienvenid@ *inserta nombre de usuario* ****
 Usuarios totales: 'X'
 1. Nuevo usuario
 2. Buscar usuario
@@ -22,7 +22,19 @@ data.txt:
   123456789e Gurgui Gomez 20 Hombre
   123456789e Gurgui Gomez 20 Hombre
   
-Al ejecutar el programa y leer el fichero 'data.txt' nos pondrá que hay 6 usuarios.
+También permite registro de usuarios e inicio de sesión, esta info la guardará en "registrados.txt".
+El formato en este caso:
+
+id usuario contraseña 1/0(1=privilegios, 0=no privilegios)
+
+Para añadir muchos Gurguis:
+registrados.txt:
+ 1 gurgui0 gurgui123 1 => Este Gurgui tiene privilegios
+ 2 gurgui1 gurgui123 0
+ 3 gurgui2 gurgui123 0
+ 4 gurgui3 gurgui123 0
+ 
+NOTA:Esto es si lo quieres añadir manualmente, no es necesario.
 
 El programa sigue leyendo data.txt aunque esté como oculto (attrib +H /path/a/data.txt). Peeeeero, no permite guardar los cambios si el archivo está oculto,
 será cuestión de permisos ya que me dejará usar ifstream(leer datos) pero no ofstream(escribir datos), lo investigaré.
