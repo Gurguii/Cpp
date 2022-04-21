@@ -5,9 +5,16 @@
 #include <stdio.h>
 #include <conio.h>
 #include <math.h>
+#include <sstream>
 using namespace std;
-//Supongo que esto no hace falta ni mucho menos, con una estructura sería 
-//suficiente para hacerlo, pero me apetecía usar clases :P
+/*
+  <cstdio> Functions
+  Supongo que esto no hace falta ni mucho menos, con una estructura sería 
+  suficiente para hacerlo, pero me apetecía usar clases :P
+  También podía prescindir de la función de clase check_privs(); y hacer la variable privilegios pública, pero me apetece probar cosas
+  Seguro que hay muchas más cosas mejorables :)
+*/
+int recordar_guardado = 0;
 class Currentuser{
   protected:
     int privilegios;
@@ -15,18 +22,57 @@ class Currentuser{
     int id;
     string usuario;
     string pass;
-    void set_data(int id, string usuario, string pass, int privilegios){
-      this->id = id;
-      this->usuario = usuario;
-      this->pass = pass;
-      this->privilegios = privilegios;
+    void set_data(int* id, string* usuario, string* pass, int* privilegios){
+      this->id = *id;
+      this->usuario = *usuario;
+      this->pass = *pass;
+      this->privilegios = *privilegios;
     }
     void Perfil(){
-      cout << "Esto esta en construccion" << endl;
-      cout << this->usuario << endl;
-      cout << this->id << endl;
-      cout << this->pass << endl;
-      cout << this->privilegios << endl;
+      string* respuesta = new string;
+      system("cls");
+      cout << "--- Mi perfil ---" << endl ;
+      cout << "Id: " << this->id << endl;
+      cout << "Usuario: " << this->usuario << endl;
+      cout << "Privilegios: ";
+      if(this->privilegios){
+        cout << "Si" << endl;
+      }else{
+        cout << "No" << endl;
+      }
+      cout << "1. Eliminar cuenta" << endl;
+      cout << "0. Salir" << endl;
+      cout << "=> ";
+      cin >> *respuesta;
+      if(*respuesta == "1"){
+        delete respuesta;
+        this->EliminarCuenta();
+      }else if(*respuesta == "0"){
+        delete respuesta;
+        return;
+      }
+      delete respuesta;
+      return;
+    }
+    void EliminarCuenta(){
+      string* linea = new string;
+      string* palabras = new string;
+      ifstream fichero("registrados.txt");
+      ofstream temp("temp.txt");
+      while(fichero){
+        if(!fichero.good()){break;}
+        getline(fichero, *linea);
+        stringstream(*linea) >> *palabras;
+        if(stoi(*palabras) == this->id){
+          continue;
+        }
+        temp << *linea << endl;
+      }
+      fichero.close();
+      temp.close();
+      remove("registrados.txt");
+      rename("temp.txt", "registrados.txt");
+      cout << "Adios :(" << endl;
       cin.get();
       cin.clear();
       cin.ignore(10000,'\n');
@@ -40,7 +86,6 @@ class Currentuser{
       }
     }
 };
-int recordar_guardado = 0;
 Currentuser currentuser;
 struct Persona{
   string dni;
@@ -243,22 +288,23 @@ void VerUsuarios(Contactos* contacts){
       continue;
     }
     else if(*eleccion == "d" || *eleccion == "D"){
-      if(*pos == contacts->userlist.size()-1){continue;}
+      if(*max == contacts->userlist.size()-1){continue;}
       *pos = *max;
       continue;
     }
     else if(*eleccion == "x" || *eleccion == "X"){
       string* opc = new string;
       int* index = new int;
-      cout << endl << "A quien deseas eliminar?";
+      cout << endl << "Usuario a eliminar => ";
       cin >> *index;
       if(currentuser.check_privs()){
         //BORRAR USUARIO
         cout << "Vas a eliminar a " << contacts->userlist[*pos+*index-1].nombre << " " << contacts->userlist[*pos+*index-1].apellido << endl;
-        cout << "Continuar? s/n ";
+        cout << "Continuar s/n ";
         cin >> *opc;
         if(*opc == "s" || *opc == "S"){
           contacts->userlist.erase(contacts->userlist.begin()+(*pos+*index-1));
+          contacts->contador-=1;
           delete index;
           delete opc;
           cout << "Usuario eliminado" << endl;
@@ -273,7 +319,7 @@ void VerUsuarios(Contactos* contacts){
         }
       }
       else{
-        cout << "No tienes privilegios pa" << endl;
+        cout << "No tienes privilegios nené" << endl;
         cin.get();
         cin.clear();
         cin.ignore(10000, '\n');
@@ -322,6 +368,7 @@ void VerUsuarios(Contactos* contacts){
           delete rsp2;
           break;
         }
+        else{continue;}
       }
       continue;
     }
@@ -444,19 +491,20 @@ int IniciarSesion(int* id, string* usuario, string* contra, int* privs){
   cin.ignore(10000,'\n');
   return(0);
 }
-//HACER CAMBIARDATOS();
-int main(){
+void IniciarSesion(){
   int* userid = new int;
   string* username = new string;
   string* pass = new string;
   int* privs = new int;
-  //PRIMERO INICIAR SESION
   int* eleccion = new int;
   while(1){
     system("cls");
+    cout << "*****************************" << endl;
+    cout << "**** GurguiBase de datos ****" << endl;
     cout << "1. Iniciar sesion" << endl;
     cout << "2. Registrarse" << endl;
     cout << "0. Salir" << endl;
+    cout << "*****************************" << endl;
     cout << "Opcion: ";
     cin >> *eleccion;
     if (*eleccion == 1){
@@ -475,13 +523,15 @@ int main(){
       continue;
     }
   }
-  currentuser.set_data(*userid, *username, *pass, *privs);
+  currentuser.set_data(userid, username, pass, privs);
   delete userid;
   delete username;
   delete pass;
   delete privs;
   delete eleccion;
-  //DESPUES LEER DATOS
+}
+int main(){
+  IniciarSesion();
   Contactos contacts;
   Persona* leerUsuario = new Persona;
   ifstream data("data.txt");
@@ -502,16 +552,20 @@ int main(){
   int opcion{};
   while(true){
     system("cls");
-    cout << "**** " << "Bienvenid@ " << currentuser.usuario << " ****" << endl;
-    cout << "Usuarios totales: " << contacts.contador << endl;
-    cout << "1. Nuevo usuario" << endl;
-    cout << "2. Buscar usuario" << endl;
-    cout << "3. Eliminar usuario" << endl;
-    cout << "4. Vaciar usuarios" << endl;
-    cout << "5. Ver usuarios" << endl;
-    cout << "6. Guardar cambios" << endl;
-    cout << "0. Salir" << endl;
-    cout << "Opcion: ";
+    cout << "********************************" << endl;
+    cout << "        " << "Bienvenid@ " << currentuser.usuario << endl;
+    cout << "********************************" << endl;
+    cout << "****   1. Nuevo usuario     ****" << endl;
+    cout << "****   2. Buscar usuario    ****" << endl;
+    cout << "****   3. Eliminar usuario  ****" << endl;
+    cout << "****   4. Vaciar usuarios   ****" << endl;
+    cout << "****   5. Ver usuarios      ****" << endl;
+    cout << "****   6. Guardar cambios   ****" << endl;
+    cout << "****   7. Mi perfil         ****" << endl;
+    cout << "****   8. Cerrar sesion     ****" << endl;
+    cout << "****   0. Salir             ****" << endl;
+    cout << "Usuarios: " << contacts.contador << endl;
+    cout << "     Opcion: ";
     opcion = getch();
     cout << endl;
     switch (char(opcion)){
@@ -537,6 +591,12 @@ int main(){
         continue;
       case '6' :
         GuardarCambios(&contacts);
+        continue;
+      case '7' :
+        currentuser.Perfil();
+        continue;
+      case '8' :
+        IniciarSesion();
         continue;
       case '0' :
         if(recordar_guardado){
