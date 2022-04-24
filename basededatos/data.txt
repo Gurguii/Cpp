@@ -8,7 +8,6 @@
 24111421S Laura Martinez 33 Mujer
 70726481D Daniel Martinez 53 Hombre
 14544906M Carla Garcia 57 Mujer
-74399817S Lucas Martinez 29 Hombre
 21179241J Gurgui Garcia 42 Mujer
 75125781F Esperanza Fernandez 64 Mujer
 75125781F Carmen Garcia 29 Mujer
@@ -16,7 +15,6 @@
 21105929W Marta Martinez 54 Mujer
 71677415P Esperanza Sanchez 31 Mujer
 70726481D Carla Garcia 23 Mujer
-13339141S Pedro Fernandez 29 Hombre
 37743900A Lucas Sanchez 58 Hombre
 63919854W Carmen Fernandez 73 Mujer
 23048429Z Esperanza Gonzalez 72 Mujer
