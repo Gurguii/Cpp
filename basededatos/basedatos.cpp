@@ -6,9 +6,11 @@
 #include <conio.h>
 #include <math.h>
 #include <sstream>
+#include <filesystem>
+
 using namespace std;
 /*
-  <cstdio> Functions
+  '<cstdio> Functions'
   Supongo que esto no hace falta ni mucho menos, con una estructura sería 
   suficiente para hacerlo, pero me apetecía usar clases :P
   También podía prescindir de la función de clase check_privs(); y hacer la variable privilegios pública, pero me apetece probar cosas
@@ -34,6 +36,7 @@ class Currentuser{
   protected:
     int privilegios;
     int cambiosUser = 0;
+    int solicitudesSinVer = 0;
     string prevusername;
     vector<string> amigos{};
     vector<SolicitudDeAmistad> solicitudes{};
@@ -54,44 +57,35 @@ class Currentuser{
       this->peso = *peso;
       this->prevusername = *usuario;
     }
-    void Cabecera(string nombre){
+    void CabeceraPerfil(){
       system("cls");
       cout << "****************************" << endl;
-      cout << "       " << nombre << endl;
+      cout << "*****    MI PERFIL    ******" << endl;
       cout << "****************************" << endl;
+      cout << "Nick: " << nickname << endl;
+      cout <<  "----------------------------" << endl;
+      cout << "Usuario: " << usuario << endl;
+      cout <<  "----------------------------" << endl;
+      cout << "Privilegios: ";
+      this->privilegios ? cout << "Si tienes" << endl : cout << "No tienes" << endl;
+      cout <<  "----------------------------" << endl;
+      cout << "Mail: ";
+      this->mail == "''" ? cout << "No establecido" << endl : cout << "Mail: " << this->mail << endl;
+      cout <<  "----------------------------" << endl;
+      cout << "Estatura(m): ";
+      this->estatura == "''" ? cout << "No establecida" << endl : cout << "Estatura: " << this->estatura << " m" << endl;
+      cout <<  "----------------------------" << endl;
+      cout << "Peso(kg): ";
+      this->peso == "''" ? cout << "No establecido" << endl : cout << "Peso: " << this->peso << " kg" << endl;
+      cout <<  "----------------------------" << endl;
+      cout << endl << endl;
     }
     void Perfil(){
       string* respuesta = new string;
       while(1){
-        Cabecera("Mi perfil");
-        cout << "Nick: " << nickname << endl;
-        cout << "Usuario: " << usuario << endl;
-        cout << "Privilegios: ";
-        if(privilegios){
-          cout << "Si" << endl;
-        }else{
-          cout << "No" << endl;
-        }
-        cout << "Mail: ";
-        if(mail == "''"){
-          cout << "no establecido" << endl;
-        }else{
-          cout << mail << endl;
-        }
-        cout << "Estatura: ";
-        if(estatura == "''"){
-          cout << "no establecida" << endl;
-        }else{
-          cout << estatura << " m" << endl;
-        }
-        cout << "Peso: ";
-        if(peso == "''"){
-          cout << "no establecido" << endl;
-        }else{
-          cout << peso << " kg" << endl;
-        }
+        CabeceraPerfil();
         cout << "****************************";
-        cout << endl << "           Ajustes         " << endl;
+        cout << endl << "          Ajustes         " << endl;
         cout << "****************************" << endl;
         cout << "**** 1. Eliminar cuenta ****" << endl;
         cout << "**** 2. Editar perfil   ****" << endl;
@@ -104,23 +98,20 @@ class Currentuser{
         if(*respuesta == "0"){
           if(cambiosUser){
             string *respuesta = new string;
-            cout << "Hay cambios tu informacion sin guardar, desea guardarlos? s/n ";
+            cout << "Hay datos de tu perfil sin guardar, desea guardarlos? s/n ";
             cin >> *respuesta;
             if(*respuesta == "s" || *respuesta == "S"){
               delete respuesta;
               this->GuardarCambios();
-              delete respuesta;
               exit(0);
             }
             else{
               cout << endl << "Hasta otra :)" << endl;
               delete respuesta;
-              exit(0);
+              return;
             }
           }
           cout << endl << "Hasta otra :)" << endl;
-          delete respuesta;
-          exit(0);
           return;
         }
         else if(*respuesta == "1"){
@@ -145,64 +136,83 @@ class Currentuser{
    }
 
     void Social(){
-      string* respuesta = new string;
-      Cabecera("Social");
-      cout << "1. Aniadir amigo" << endl;
-      cout << "2. Ver solicitudes" << endl;
-      cout << "3. Lista de amigos" << endl;
-      cout << "0. Salir" << endl;
-      cout << "Opcion => ";
-      cin >> *respuesta;
-      if(*respuesta == "0"){
-        delete respuesta;
-        return;
-      }else if(*respuesta == "1"){
-        delete respuesta;
-        AddUser();
-        Perfil();
-      }else if(*respuesta == "2"){
-        int* num = new int;
-        string* resp = new string;
-        if(solicitudes.size() == 0){
-          cout << "No tienes solicitudes :( ";
+      while(1){
+        CabeceraPerfil();
+        cout << "****************************" << endl;
+        cout << "            Social          " << endl;
+        cout << "****************************" << endl;
+        cout << "1. Aniadir amigo" << endl;
+        this->solicitudesSinVer ? cout << "2. Ver solicitudes(" << this->solicitudes.size() << ")" << endl : cout << "2. Ver solicitudes" << endl;
+        cout << "3. Lista de amigos" << endl;
+        cout << "0. Salir" << endl;
+        cout << "Opcion => ";
+        string* respuesta = new string;
+        cin >> *respuesta;
+        if(*respuesta == "0"){
+          delete respuesta;
+          return;
+        }else if(*respuesta == "1"){
+          delete respuesta;
+          AddUser();
+          Perfil();
+        }else if(*respuesta == "2"){
+          int* num = new int;
+          string* resp = new string;
+          if(solicitudes.size() == 0){
+            cout << "No tienes solicitudes :( ";
+            cin.get();
+            cin.clear();
+            cin.ignore(10000,'\n');
+            continue;
+          }
+          cout << "Mis solicitudes" << endl;
+          cout << "   Nick" << "          Mensaje" << endl;
+          for(int i = 0, j = 1; i < solicitudes.size(); i++, j++){
+            cout << j << ". " << solicitudes[i].emisor << "       " << solicitudes[i].mensaje << endl;
+          }
+          cout << "0. Salir" << endl;
+          cout << "Solicitud => ";
+          cin >> *num;
+          if(*num == 0){
+            continue;
+          }
+          cout << "Aceptar s/n: ";
+          cin >> *resp;
+          if(*resp == "s" || *resp == "S"){
+            this->amigos.push_back(solicitudes[*num-1].emisor);
+            cout << "Solicitud aceptada";
+            cin.get();
+            cin.clear();
+            cin.ignore(10000, '\n');
+            this->solicitudes.erase(this->solicitudes.begin()+*num-1);
+            ActualizarFicheroAmigos(&this->solicitudes[*num-1].emisor);
+            LimpiarSolicitud(&solicitudes[*num-1].emisor);
+            if(!this->solicitudes.size()){
+              solicitudesSinVer = 0;
+            }else{
+              solicitudesSinVer = 1;
+            }
+          }else if(*resp == "n" || *resp == "N"){
+            cout << "Solicitud rechazada";
+            cin.get();
+            cin.clear();
+            cin.ignore(10000, '\n');
+            !this->solicitudes.size() ? solicitudesSinVer = 0 : solicitudesSinVer = 1;
+            continue;
+          }
+          delete num;
+          delete resp;
+          delete respuesta;
+        }else if(*respuesta == "3"){
+          cout << "Lista de amigos" << endl;
+          for(string amigo : this->amigos){
+            cout << amigo << endl;
+          }
           cin.get();
           cin.clear();
-          cin.ignore(10000,'\n');
-          Perfil();
+          cin.ignore(10000, '\n');
+          continue;
         }
-        Cabecera("Mis solicitudes");
-        cout << "   Nick" << "          Mensaje" << endl;
-        for(int i = 0, j = 1; i < solicitudes.size(); i++, j++){
-          cout << j << ". " << solicitudes[i].emisor << "       " << solicitudes[i].mensaje << endl;
-        }
-        cout << "0. Salir" << endl;
-        cout << "Solicitud => ";
-        cin >> *num;
-        if(*num == 0){
-          Perfil();
-        }
-        cout << "Aceptar s/n: ";
-        cin >> *resp;
-        if(*resp == "s" || *resp == "S"){
-          this->amigos.push_back(solicitudes[*num-1].emisor);
-          cout << "Solicitud aceptada" << endl;
-          this->solicitudes.erase(this->solicitudes.begin()+*num-1);
-          ActualizarFicheroAmigos(&this->solicitudes[*num-1].emisor);
-          LimpiarSolicitud( &solicitudes[*num-1].emisor );
-        }else{
-          return;
-        }
-        delete num;
-        delete resp;
-        delete respuesta;
-      }else if(*respuesta == "3"){
-        cout << "-- Amigos --" << endl;
-        for(int i = 0; i<this->amigos.size(); i++){
-          cout << this->amigos[i] << endl;
-        }
-        cin.get();
-        cin.clear();
-        cin.ignore(10000, '\n');
       }
     }
     void LimpiarSolicitud(string* nick){
@@ -211,14 +221,14 @@ class Currentuser{
       string* linea = new string;
       string* emisor = new string;
       string* receptor = new string;
-      while(!leer.eof()){
-        if(!leer.good()){break;}
-        getline(leer, *linea);
-        stringstream(*linea) >> *receptor >> *emisor;
-        if(*receptor == this->nickname & *emisor == *nick){
-          continue;
+      if(leer.is_open()){
+        while(getline(leer, *linea)){
+          stringstream(*linea) >> *receptor >> *emisor;
+          if(*receptor == this->nickname & *emisor == *nick){
+            continue;
+          }
+          temporal << *linea << endl;
         }
-        temporal << *linea << endl;
       }
       temporal.close();
       leer.close();
@@ -229,59 +239,55 @@ class Currentuser{
       delete receptor;
     }
     void CargarListaAmigos(){
-      vector<string> amiguitos{};
-      string* nick = new string;
-      string* listaamigos = new string;
+      string* checknick = new string;
+      string* linea = new string;
       string* amigo = new string;
-      string* prev = new string;
-      ifstream amigos("amigos.txt");
-      while(!amigos.eof()){
-        if(!amigos.good()){break;}
-        amigos >> *nick;
-        if(*nick == this->nickname){
-          getline(amigos, *listaamigos);
-          stringstream lista(*listaamigos);
-          while(1){
-            lista >> *amigo;
-            if(*amigo == *prev){
-              break;
+      ifstream leer("amigos.txt");
+      if(leer.is_open()){
+        while(!leer.eof()){
+          leer >> *checknick;
+          if(getline(leer, *linea)){
+            stringstream ss(*linea);
+            if(*checknick == this->nickname){
+              while(ss >> *amigo){
+                cout << *amigo << endl;
+                this->amigos.push_back(*amigo);
+              }
             }
-            this->amigos.push_back(*amigo);
-            amiguitos.push_back(*amigo);
-            *prev = *amigo;
           }
         }
       }
-      amigos.close();
-      delete nick;
-      delete listaamigos;
+      leer.close();
+      delete checknick;
+      delete linea;
       delete amigo;
-      delete prev;
     }
-    //ARREGLAR FUNCION
     void ActualizarFicheroAmigos(string* enviadordepeticion){ 
-      ifstream leer("amigos.txt");
-      ofstream temp("temp.txt");
       string* linea = new string;
-      string* checkuser = new string;
-      while(!leer.eof()){
-        if(!leer.good()){break;};
-        getline(leer, *linea);
-        stringstream(*linea) >> *checkuser;
-        if(*checkuser == this->nickname){
-          temp << endl << *linea << " " << this->amigos[this->amigos.size()-1];
-        }else if(*checkuser == *enviadordepeticion){
-          temp << endl << *linea << " " << this->nickname;
-        }else{
-          temp << endl << *linea;
+      string* checknick = new string;
+      ifstream leer("amigos.txt");
+      ofstream temporal("temp.txt");
+      if(leer.is_open() & temporal.is_open()){
+        while(getline(leer, *linea)){
+          stringstream(*linea) >> *checknick;
+          if(*checknick == this->nickname){
+            temporal << *linea << " " << *enviadordepeticion << endl;
+          }else if(*checknick == *enviadordepeticion){
+            temporal << *linea << " " << this->nickname << endl;
+          }else{
+            temporal << *linea << endl;
+          }
         }
+      }else{
+        cout << "No se han podido abrir los ficheros" << endl;
+        exit(0);
       }
       leer.close();
-      temp.close();
+      temporal.close();
       remove("amigos.txt");
-      rename("temp.txt", "amigos.txt");
+      rename("temp.txt","amigos.txt");
       delete linea;
-      delete checkuser;
+      delete checknick;
     }
     void ComprobarSolicitudes(){
       string* receptor = new string;
@@ -301,6 +307,7 @@ class Currentuser{
         getline(solicitudes, *mensaje);
         if(*receptor == this->nickname){
           this->solicitudes.push_back(SolicitudDeAmistad{*emisor, *mensaje});
+          this->solicitudesSinVer = 1;
           continue;
         }
       }
@@ -321,7 +328,7 @@ class Currentuser{
         if(!checkSolicitud.good()){break;}
         checkSolicitud >> *word1 >> *word2;
         if(*word1 == *nick & *word2 == this->nickname){
-          cout << "Ya has mandado una solicitud a " << *nick << ", espera que responda¡";
+          cout << "Ya has mandado una solicitud a " << *nick << ", espera que responda...";
           checkSolicitud.close();
           delete line;
           delete word1;
@@ -332,8 +339,8 @@ class Currentuser{
           Perfil();
         }
       }
-      for(int i = 0; i < this->amigos.size(); i++){
-        if(this->amigos[i] == *nick){
+      for(string amigo : this->amigos){
+        if(amigo == *nick){
           cout << "Ya tienes a " << *nick << " agregad@ cabesa de webo";
           checkSolicitud.close();
           delete line;
@@ -416,7 +423,9 @@ class Currentuser{
       string* respuesta2 = new string;
       string* checkpass = new string;
       while(1){
-        Cabecera("Editar Perfil");
+        cout << "*****************************" << endl;
+        cout << "******* EDITAR PERFIL *******" << endl;
+        cout << "*****************************" << endl;
         cout << "******  1. Nick        ******" << endl;
         cout << "******  2. Usuario     ******" << endl;
         cout << "******  3. Contrasenia ******" << endl;
@@ -469,38 +478,16 @@ class Currentuser{
             }
             continue;
           case '4':
-            if(mail == "''"){
-              cout << "Establece tu mail: ";
-              cin >> *respuesta2;
-              mail = *respuesta2;
-              cambiosUser = 1;
-            }else{
-              cout << "Nuevo mail: ";
-              cin >> *respuesta2;
-              mail = *respuesta2;
-              cambiosUser = 1;
-            }
+            mail == "''" ? cout << "Establece tu mail: " : cout << "Nuevo mail: ";
+            cin >> this->mail;
             continue;
           case '5':
-            if(estatura == "''"){
-              cout << "Establece tu estatura: ";
-              cin >> *respuesta2;
-              estatura = *respuesta2;
-              cambiosUser = 1;
-            }else{
-              cout << "Nueva estatura: ";
-              cin >> *respuesta2;
-              estatura = *respuesta2;
-              cambiosUser = 1;
-            }
+            estatura == "''" ? cout << "Establece tu estatura: " : cout << "Nueva estatura: ";
+            cin >> this->estatura;
             continue;
           case '6':
-            if(peso == "''"){
-              cout << "Establece tu peso: ";
-              cin >> *respuesta2;
-              peso = *respuesta2;
-              cambiosUser = 1;
-            }
+            peso == "''" ? cout << "Establece tu peso: " : cout << "Nuevo peso";
+            cin >> this->peso;
             continue;
           default:
             delete respuesta1;
@@ -521,14 +508,15 @@ class Currentuser{
       string* palabras = new string;
       ifstream fichero("registrados.txt");
       ofstream temp("temp.txt");
-      while(fichero){
-        if(!fichero.good()){break;}
-        getline(fichero, *linea);
-        stringstream(*linea) >> *palabras;
-        if(*palabras == this->usuario){
-          continue;
+      if(fichero.is_open()){
+        while(getline(fichero, *linea)){
+          if(!fichero.good()){break;}
+          stringstream(*linea) >> *palabras;
+          if(*palabras == this->usuario){
+            continue;
+          }
+          temp << *linea << endl;
         }
-        temp << *linea << endl;
       }
       fichero.close();
       temp.close();
@@ -567,7 +555,6 @@ string ComprobarDni(){
     }
     *numero = stoi(dni.substr(0,8));
     *letra = dni[dni.size()-1];
-    //.at(dni.size()-1);
     if ( letras[*numero%23] == char(toupper(*letra)) ){
       delete numero;
       delete letra;
@@ -637,13 +624,13 @@ void NuevoUsuario(Contactos* contacts){
 void BuscarUsuario(Contactos* contacts){
   string* dni = new string;
   *dni = ComprobarDni();
-  for(int i = 0; i<contacts->userlist.size(); i++){
-    if (contacts->userlist[i].dni == *dni){
+  for(Persona usuario : contacts->userlist){
+    if (usuario.dni == *dni){
       cout << "--Usuario encontrado--" << endl;
-      cout << "Nombre   --> " << contacts->userlist[i].nombre << endl;
-      cout << "Apellido --> " << contacts->userlist[i].apellido << endl;
-      cout << "Edad     --> " << contacts->userlist[i].edad << endl;
-      cout << "Sexo     --> " << contacts->userlist[i].sexo << endl;
+      cout << "Nombre   --> " << usuario.nombre << endl;
+      cout << "Apellido --> " << usuario.apellido << endl;
+      cout << "Edad     --> " << usuario.edad << endl;
+      cout << "Sexo     --> " << usuario.sexo << endl;
       cout << "Pulse enter para continuar ..." << endl;
       cin.get();
       cin.clear();
@@ -653,10 +640,7 @@ void BuscarUsuario(Contactos* contacts){
     }
   }
   delete dni;
-  cout << "No se ha encontrado ningun usuario con dni: " << *dni << endl;
-  cin.get();
-  cin.clear();
-  cin.ignore(10000, '\n');
+  return;
 }
 void EliminarUsuario(Contactos* contacts){
   string* dni = new string;
@@ -941,22 +925,25 @@ int IniciarSesion(string* nickname, string* usuario, string* contra, int* privs,
   cout << "Contrasenia: ";
   cin >> *pass;
   ifstream check_login("registrados.txt");
-  while(check_login){
-    check_login >> *checkuser >> *checkpass;
-    getline(check_login, *linea);
-    if(*checkuser == *username & *checkpass == *pass){
-      check_login.close();
-      *usuario = *checkuser;
-      *contra = *checkpass;
-      stringstream(*linea) >> *nickname >> *privs >> *mail >> *altura >> *peso ;
-      delete username;
-      delete pass;
-      delete checkuser;
-      delete checkpass;
-      delete linea;
-      return(1);
+  if(check_login.is_open()){
+    while(!check_login.eof()){
+      check_login >> *checkuser >> *checkpass;
+      getline(check_login, *linea);
+      if(*checkuser == *username & *checkpass == *pass){
+        check_login.close();
+        *usuario = *checkuser;
+        *contra = *checkpass;
+        stringstream(*linea) >> *nickname >> *privs >> *mail >> *altura >> *peso ;
+        delete username;
+        delete pass;
+        delete checkuser;
+        delete checkpass;
+        delete linea;
+        return(1);
+      }
     }
   }
+
   check_login.close();
   cout << "Por favor, revisa las credenciales" << endl;
   cin.get();
@@ -1010,15 +997,30 @@ void IniciarSesion(){
   delete privs;
   delete eleccion;
 }
+void ComprobarCrearFicheros(){
+  string ficheros[] = {"data.txt","amigos.txt","registrados.txt","solicitudes.txt"};
+  for(string nombre : ficheros){
+    if(!filesystem::exists(nombre)){
+      ofstream nuevo(nombre);
+      if(nuevo){
+        nuevo.close();
+      }else{
+        cout << "No se pudo crear el fichero " << nombre << endl;
+        exit(0);
+      }
+    }
+  }
+}
 int main(){
+  ComprobarCrearFicheros();
   IniciarSesion();
   currentuser.ComprobarSolicitudes();
   currentuser.CargarListaAmigos();
   Contactos contacts;
   Persona* leerUsuario = new Persona;
   ifstream data("data.txt");
-  if(data){
-    while(data){
+  if(data.is_open()){
+    while(!data.eof()){
       data >> leerUsuario->dni >> leerUsuario->nombre >> leerUsuario->apellido >> leerUsuario->edad >> leerUsuario->sexo;
       contacts.userlist.push_back(*leerUsuario);
     }
