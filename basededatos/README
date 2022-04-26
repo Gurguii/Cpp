@@ -1,3 +1,8 @@
+ ESP - EL PROGRAMA CREA LOS FICHEROS QUE FALTEN EN EL DIRECTORIO EN EL QUE SE SITÚE, SÓLO DEJO EL DATA.TXT PORQUE SI EL DNI NO ES REAL NO DEJA AÑADIR.
+ ENG - THE PROGRAM ITSELF CREATES MISSING FILES IN ITS' CURRENT DIRECTORY, I'M JUST LEAVING DATA.TXT HERE CAUSE U NEED A VALID (NATIONAL IDENTITY DOCUMENT)
+        IN ORDER TO BE ABLE TO ADD DATA.
+
+  --- ESPAÑOL ---
 Arriba te dejo una carpeta con imágenes de algunos menús por si te interesa ver cómo se ve o qué se puede hacer.
 Tengo que terminar de dejar los menús más bonitos y revisar el código, así que todo es susceptible a cambios.
 
@@ -16,7 +21,7 @@ registrados.txt => Almacena la información de los usuarios registrados.
 solicitudes.txt => Almacena las solicitudes de amistad.
   Formato --> ana gurguii ¡Hola ana! agrégame :) // Receptor + Emisor + Mensaje
   
----------------------------------------------------------------------------------------------------------------------------------------------------------
+  --- ENGLISH ---
 There's a file above called "fotos" which contains pics of some of the program's menus so you can see how it looks or what you can do.
 Still got to improve some menus and review the code, so stuff might change.
 
