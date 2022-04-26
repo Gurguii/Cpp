@@ -20,7 +20,7 @@ solicitudes.txt => Almacena las solicitudes de amistad.
 There's a file above called "fotos" which contains pics of some of the program's menus so you can see how it looks or what you can do.
 Still got to improve some menus and review the code, so stuff might change.
 
-File explanaition:
+File explanation:
 
 amigos.txt(friends.txt) => Stores registered users' nickname and his/her friends(separated by spaces)
   Format --> Gurgui pedro ana maria juan // Nickname + friends
