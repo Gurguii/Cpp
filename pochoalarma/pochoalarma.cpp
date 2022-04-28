@@ -10,6 +10,7 @@ void Contador(int n){
   this_thread::sleep_for(chrono::minutes(n));
   while(1){
     ShowWindow(GetConsoleWindow(), 1);
+    SetForegroundWindow(GetConsoleWindow());
     cout << "ES LA HORA MAIK WASOUSKI" << endl;
     cout << "Posponer(minutos, letra para sair) => ";
     cin >> s;
