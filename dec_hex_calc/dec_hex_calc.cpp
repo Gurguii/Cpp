@@ -12,10 +12,11 @@ int main()
   char check = {};
   cout << "Salir: 'ctrl+c'" << endl;
   cout << "Ejemplo: 255 255 255 => #fffff" << endl;
+  cout << "Cada factor debe ser un numero entre 0-255" << endl;
   while(1){
     cout << "RGB: ";
-    while(!(cin >> RGB[0] >> RGB[1] >> RGB[2])){
-      cout << "Mira el ejemplo arriba :P :";
+    while(!(cin >> RGB[0] >> RGB[1] >> RGB[2]) || RGB[0]<0 || RGB[1]<0 || RGB[2]<0){
+      cout << "Mira la info de arriba: ";
       cin.clear();
       cin.ignore(numeric_limits<streamsize>::max(),'\n');
     }
