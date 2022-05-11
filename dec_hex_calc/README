@@ -1,0 +1,6 @@
+Ejecuta el exe y el programa te dirá como escribir el RGB, básicamente separado por espacios:
+Ejemplo => 255 255 255 => #ffffff
+
+Launch the .exe file and program will prompt 'RGB:' just type the RGB with spaces and enter :)
+Exit: ctrl+c
+Example => 255 255 255 => #ffffff
