@@ -9,7 +9,6 @@ int main()
   string conversion = "";
   string listahexa={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
   int RGB[3]{};
-  char check = {};
   cout << "Salir: 'ctrl+c'" << endl;
   cout << "Ejemplo: 255 255 255 => #fffff" << endl;
   cout << "Cada factor debe ser un numero entre 0-255" << endl;
@@ -25,6 +24,7 @@ int main()
     string resultados = "";
     for(int n : RGB){
       if (n < 16){
+        resultados+="0";
         resultados+=listahexa[n];
         continue;
       }
@@ -52,3 +52,4 @@ int main()
   }
 
 }
+
